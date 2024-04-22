@@ -1,7 +1,8 @@
 
-import * as debug from 'debug';
+import debug from 'debug';
+import * as fs from 'fs';
 
-const pkg = require('../package.json');
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 const defaultLogger = debug(pkg.name);
 
 export default function (name?: string) {

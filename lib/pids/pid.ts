@@ -1,12 +1,11 @@
 'use strict';
 
-import * as R from 'ramda';
-import * as c from 'case';
-import * as assert from 'assert';
-import * as conversions from './conversions';
+import Case from 'case';
+import assert from 'assert';
+import * as conversions from './conversions.js';
 import { format } from 'util';
-import { OBD_MESSAGE_TYPES } from '../constants';
-import { PIDArgs } from '../interfaces';
+import { OBD_MESSAGE_TYPES } from '../constants.js';
+import { PIDArgs } from '../interfaces.js';
 
 
 /**
@@ -42,7 +41,7 @@ export abstract class PID {
     assert(opts.bytes > 0, 'opts.bytes for PID must be above 0');
 
     // This can be used to identify this PID
-    this.constname = c.constant(opts.name);
+    this.constname = Case.constant(opts.name);
 
     // Save these for use
     this.opts = opts;

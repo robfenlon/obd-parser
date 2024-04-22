@@ -1,9 +1,8 @@
 'use strict';
 
-import * as connection from './connection';
-import * as Promise from 'bluebird';
-import * as PIDS from './pids/pid';
-import generateLogger from './log';
+import * as connection from './connection.js';
+import * as PIDS from './pids/pid.js';
+import generateLogger from './log.js';
 
 const log = generateLogger();
 
@@ -11,10 +10,10 @@ const log = generateLogger();
 export { PIDS as PIDS };
 
 // Just export the vanilla ECUPoller class
-export { ECUPoller as ECUPoller } from './poller';
+export { ECUPoller as ECUPoller } from './poller.js';
 
 // Interfaces
-export { OBDOutput, PIDInfo, OBDConnection } from './interfaces';
+export { OBDOutput, PIDInfo, OBDConnection } from './interfaces.js';
 
 
 /**

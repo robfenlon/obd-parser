@@ -1,19 +1,22 @@
 
 // In your code this should be changed to 'obd-parser'
-import * as OBD from '../lib/obd-interface';
+import * as OBD from '../lib/obd-interface.js';
+import input from 'input';
+import { getConnector, listConnectors } from 'obd-parser-serial-connection';
 
-// Use a serial connection to connect
-var getConnector = require('obd-parser-serial-connection');
-
-// Returns a function that will allow us to connect to the serial port
-var connect:Function = getConnector({
-  // This might vary based on OS - this is the Mac OSX example
-  serialPath: '/dev/tty.usbserial',
-
-  // Might vary based on vehicle. This is the baudrate for a MK6 VW GTI
-  serialOpts: {
-    baudrate: 38400
+listConnectors(async (connectors: string[]) => {
+  connectors = ['COM1', 'COM2'];
+  if (connectors.length === 0) {
+    console.error("No connectors found 😢");
+    process.exit();
   }
+
+  const connection = await input.select(`Choose a connection to use:`, connectors);
+
+  // Returns a function that will allow us to connect to the serial port
+var connect:Function = getConnector({
+  serialPath: connection,
+  baudRate: 38400
 });
 
 // Need to initialise the OBD module with a "connector" before starting
@@ -61,3 +64,5 @@ OBD.init(connect)
         console.error('failed to poll the ECU', err);
       });
   });
+
+}, console.error);

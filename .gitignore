@@ -6,6 +6,7 @@ coverage
 .vscode
 typings
 *.d.ts
+!declarations.d.ts
 *.js
 *.rdb
 output

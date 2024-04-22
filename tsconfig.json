@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "target": "es2017",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "isolatedModules": false,
     "jsx": "react",
     "experimentalDecorators": false,
     "emitDecoratorMetadata": false,
+    "resolveJsonModule": true,
     "declaration": true,
     "noImplicitAny": true,
     "removeComments": true,
@@ -19,7 +20,7 @@
     "strictNullChecks": true,
     "baseUrl": "."
   },
-  "include": ["lib/**/*", "example/**/*"],
+  "include": ["lib/**/*", "example/**/*", "declarations.d.ts"],
   "exclude": [
     "node_modules",
     "./node_modules",

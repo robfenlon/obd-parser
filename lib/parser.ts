@@ -2,13 +2,12 @@
 
 import * as R from 'ramda';
 import { Transform } from 'stream';
-import { OBD_OUTPUT_DELIMETER, OBD_OUTPUT_MESSAGE_TYPES } from './constants';
+import { OBD_OUTPUT_DELIMETER, OBD_OUTPUT_MESSAGE_TYPES } from './constants.js';
 import VError = require('verror');
-import * as Promise from 'bluebird';
-import * as pids from './pids/index';
-import { PID } from './pids/pid';
-import generateLogger from './log';
-import { OBDOutput } from './interfaces';
+import * as pids from './pids/index.js';
+import { PID } from './pids/pid.js';
+import generateLogger from './log.js';
+import { OBDOutput } from './interfaces.js';
 
 const log = generateLogger('OBDStreamParser');
 
@@ -17,18 +16,18 @@ let parser: OBDStreamParser;
 export class OBDStreamParser extends Transform {
   private _buffer: string;
 
-  public constructor () {
+  public constructor() {
     super();
 
     this._buffer = '';
   }
 
-  public _flush (done: Function) {
+  public _flush(done: Function) {
     this._buffer = '';
     done();
   }
 
-  public _transform (input: Buffer, encoding: String, done: Function): void {
+  public _transform(input: Buffer, encoding: String, done: Function): void {
     let data = input.toString('utf8');
     let self = this;
 
@@ -48,7 +47,7 @@ export class OBDStreamParser extends Transform {
       let outputs: Array<string> = extractOutputStrings(self._buffer);
 
       // Trigger a "data" event for each valid hex output received
-      Promise.map(outputs, (o: string) => {
+      promiseMap(outputs, (o: string) => {
         return parseObdString(o)
           .then((parsed) => {
             if (parsed) {
@@ -70,8 +69,8 @@ export class OBDStreamParser extends Transform {
       log('data was not a complete output');
       done();
     }
-      return;
-    }
+    return;
+  }
 }
 
 
@@ -81,7 +80,7 @@ export class OBDStreamParser extends Transform {
  * @param   {String} data
  * @return  {Boolean}
  */
-function hasPrompt (data: string) {
+function hasPrompt(data: string) {
   // Basically, we check that the a newline has started
   return data.indexOf(OBD_OUTPUT_DELIMETER) !== -1;
 }
@@ -92,7 +91,7 @@ function hasPrompt (data: string) {
  * @param  {String} buffer
  * @return {Array}
  */
-function extractOutputStrings (buffer: string) {
+function extractOutputStrings(buffer: string) {
   log(
     'extracting command strings from buffer %s',
     JSON.stringify(buffer)
@@ -108,7 +107,7 @@ function extractOutputStrings (buffer: string) {
     .split(/\r/g);
 
   // Remove the new prompt char
-  cmds = R.map((c:string) => {
+  cmds = R.map((c: string) => {
     return c
       .replace(OBD_OUTPUT_DELIMETER, '')
       .replace(/ /g, '')
@@ -136,7 +135,7 @@ function extractOutputStrings (buffer: string) {
  * @param  {String}  str
  * @return {Boolean}
  */
-function isHex (str: string) {
+function isHex(str: string) {
   return (str.match(/^[0-9A-F]+$/)) ? true : false;
 }
 
@@ -146,7 +145,7 @@ function isHex (str: string) {
  * @param  {String} str
  * @return {Array|null}
  */
-function getByteGroupings (str: string) : Array<string>|null {
+function getByteGroupings(str: string): Array<string> | null {
   log('extracting byte groups from %s', JSON.stringify(str));
 
   // Remove white space (if any exists) and get byte groups as pairs
@@ -159,12 +158,12 @@ function getByteGroupings (str: string) : Array<string>|null {
  * @param  {String} str
  * @return {Object}
  */
-function parseObdString (str: string) : Promise<OBDOutput|null> {
+function parseObdString(str: string): Promise<OBDOutput | null> {
   log('parsing command string %s', str);
 
   let bytes = getByteGroupings(str);
 
-  let ret:OBDOutput = {
+  let ret: OBDOutput = {
     ts: new Date(),
     bytes: str,
     value: null,
@@ -186,7 +185,7 @@ function parseObdString (str: string) : Promise<OBDOutput|null> {
 
     let pidCode: string = bytes[1];
 
-    let pid:PID|null = pids.getPidByPidCode(pidCode);
+    let pid: PID | null = pids.getPidByPidCode(pidCode);
 
     if (pid) {
       log(`we have a matching class for code "${pidCode}"`);
@@ -218,7 +217,7 @@ function parseObdString (str: string) : Promise<OBDOutput|null> {
  * @param  {Array} byteGroups
  * @return {Mixed}
  */
-function getValueForPidFromPayload (bytes: Array<string>) : Promise<string> {
+function getValueForPidFromPayload(bytes: Array<string>): Promise<string> {
   log('parsing a realtime command with bytes', bytes.join());
 
   let pidType: string = bytes[1];
@@ -249,10 +248,27 @@ function getValueForPidFromPayload (bytes: Array<string>) : Promise<string> {
     });
 }
 
-export function getParser (): OBDStreamParser {
+export function getParser(): OBDStreamParser {
   if (parser) {
     return parser;
   } else {
     return parser = new OBDStreamParser();
   }
+}
+
+function promiseMap(array: string | any[], mapper: (arg0: any, arg1: number) => Promise<any>, options: {
+  concurrency?: number;
+} = {}) {
+  const concurrency = options.concurrency || Infinity;
+  const results: any[] | PromiseLike<any[]> = [];
+  const promises = [];
+
+  for (let i = 0; i < array.length && i < concurrency; i++) {
+    const promise = mapper(array[i], i).then(result => {
+      results[i] = result;
+    });
+    promises.push(promise);
+  }
+
+  return Promise.all(promises).then(() => results);
 }

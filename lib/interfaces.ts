@@ -1,4 +1,4 @@
-import { PID } from './pids/pid';
+import { PID } from './pids/pid.js';
 
 export interface OBDConnection {
   write: Function,

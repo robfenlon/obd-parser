@@ -1,8 +1,8 @@
 
-import * as PIDS from './pids/pid';
-import { OBD_MESSAGE_TYPES } from './constants';
+import * as PIDS from './pids/pid.js';
+import { OBD_MESSAGE_TYPES } from './constants.js';
 
-export = {
+export default {
   FuelLevel: new PIDS.FuelLevel(),
   Rpm: new PIDS.Rpm(),
   CoolantTemp: new PIDS.CoolantTemp(),

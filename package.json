@@ -5,14 +5,13 @@
   "main": "lib/obd-interface.js",
   "typings": "lib/obd-interface.d.ts",
   "dependencies": {
-    "bluebird": "^3.7.2",
     "case": "^1.6.3",
     "debug": "^4.3.4",
+    "input": "^1.0.1",
     "ramda": "0.29.1",
     "verror": "^1.10.1"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.42",
     "@types/core-js": "0.9.35",
     "@types/debug": "^4.1.12",
     "@types/node": "^20.12.7",
@@ -27,6 +26,7 @@
   "scripts": {
     "example": "npm run compile && node example/poll-rpm.js",
     "example-fake": "npm run compile && node example/poll-fake.js",
+    "list": "npm run compile && node example/list-connectors.js",
     "compile": "tsc",
     "prepublish": "npm run compile",
     "linelint": "linelint $(find lib/ -name \"*.ts\" -not -name \"*.d.ts\")",
@@ -43,7 +43,9 @@
     "on board diagnostic"
   ],
   "author": "Rob Fenlon",
-  "contributors": ["Evan Shortiss"],
+  "contributors": [
+    "Evan Shortiss"
+  ],
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
@@ -52,5 +54,6 @@
   "bugs": {
     "url": "https://github.com/robfenlon/obd-parser/issues"
   },
-  "homepage": "https://github.com/robfenlon/obd-parser"
+  "homepage": "https://github.com/robfenlon/obd-parser",
+  "type": "module"
 }

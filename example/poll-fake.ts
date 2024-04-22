@@ -1,6 +1,6 @@
 
 // In your code this should be changed to 'obd-parser'
-import * as OBD from '../lib/obd-interface';
+import * as OBD from '../lib/obd-interface.js';
 
 // Use a serial connection to connect
 var getConnector = require('obd-parser-development-connection');
@@ -49,7 +49,7 @@ OBD.init(connect)
         console.log('value: ', output.value);
         console.log('pretty: ', output.pretty);
       })
-      .catch(function (err) {
+      .catch(function (err: any) {
         console.error('failed to poll the ECU', err);
       });
   });

@@ -1,10 +1,8 @@
 'use strict';
-
-import * as Promise from 'bluebird';
-import { OBD_OUTPUT_EOL } from './constants';
-import { getParser } from './parser';
-import { OBDConnection } from './interfaces';
-import generateLogger from './log';
+import { OBD_OUTPUT_EOL } from './constants.js';
+import { getParser } from './parser.js';
+import { OBDConnection } from './interfaces.js';
+import generateLogger from './log.js';
 
 const log = generateLogger('connection');
 

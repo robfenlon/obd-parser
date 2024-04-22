@@ -1,12 +1,10 @@
 'use strict';
 
-import { getConnection } from './connection';
+import { getConnection } from './connection.js';
 import { EventEmitter } from 'events';
-import { PollerArgs, OBDOutput, OBDConnection } from './interfaces';
-import { getParser } from './parser';
-import * as Promise from 'bluebird';
-import{ IDebugger } from 'debug';
-import generateLogger from './log';
+import { PollerArgs, OBDOutput, OBDConnection } from './interfaces.js';
+import { getParser } from './parser.js';
+import generateLogger from './log.js';
 
 
 /**
@@ -132,9 +130,9 @@ export class ECUPoller extends EventEmitter {
 
     // Cannot call this function if we're already polling
     if (this.polling) {
-      return Promise.reject(
-        new Error(`${self.args.pid.getName()} - cannot call poll when polling loop is active`)
-      );
+      return new Promise<OBDOutput>((resolve, reject) => {
+        reject(new Error(`${self.args.pid.getName()} - cannot call poll when polling loop is active`));
+      });
     }
 
     return new Promise<OBDOutput> ((resolve, reject) => {
