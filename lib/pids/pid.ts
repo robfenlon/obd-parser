@@ -386,14 +386,14 @@ export class ObdStandard extends PID {
 
   public getValueForBytes (bytes: string[]): string {
     const type = parseHexToDecimal(bytes[2]);
-    const obdStandards:Object = require('./data/obd-spec-list.json');
+    const obdStandards: { [key: number|string]: string } = require('./data/obd-spec-list.json');
 
     return obdStandards[type] || 'Unknown';
   }
 }
 
 export class FuelSystemStatus extends PID {
-  private types:Object = {
+  private types: { [key: number|string]: string } = {
     '1': 'Open loop due to insufficient engine temperature',
     '2': 'Closed loop, using oxygen sensor feedback to determine fuel mix',
     '4': 'Open loop due to engine load OR fuel cut due to deceleration',

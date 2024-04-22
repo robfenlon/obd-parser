@@ -12,14 +12,14 @@ import { PIDInfo } from '../interfaces';
 export function getPidByPidCode (pidstring: string) : PID|null {
   let names:Array<string> = keys(PIDS);
 
-  let pidname:string = find((name:string) => {
-    let curpid:PID = PIDS[name];
+  let pidname: string | undefined = find((name:string) => {
+    let curpid:PID = (PIDS as { [key: string]: PID })[name];
 
     return curpid.getPid() === pidstring;
   })(names);
 
   if (pidname) {
-    return PIDS[pidname];
+    return (PIDS as { [key: string]: PID })[pidname];
   } else {
     return null;
   }
