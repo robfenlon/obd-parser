@@ -20,16 +20,16 @@ export class ECUPoller extends EventEmitter {
 
   private lastResponseTs: number|null;
   private lastPollTs: number|null;
-  private pollTimer?: NodeJS.Timer;
+  private pollTimer?: number;
   private polling: boolean;
   private args: PollerArgs;
   private locked: boolean;
   private msgSendCount: number = 0;
   private msgRecvCount: number = 0;
-  private timeoutTimer?: NodeJS.Timer;
+  private timeoutTimer?: number;
   private log: Function;
-  private timeoutFn?: Function;
-  private curListener?: Function;
+  private timeoutFn?: (...args: any[]) => void;
+  private curListener?: (...args: any[]) => void;
 
   public constructor (args: PollerArgs) {
     super();
@@ -53,7 +53,7 @@ export class ECUPoller extends EventEmitter {
    * @return {Number}
    */
   private getNextPollDelay () : number {
-    if (this.lastPollTs) {
+    if (this.lastResponseTs && this.lastPollTs) {
       // A poll has occurred previously. If we're calling this function
       // before the max interval time is reached then we must wait n ms
       // where n is the difference between the max poll rate and last poll sent
@@ -64,7 +64,7 @@ export class ECUPoller extends EventEmitter {
         return this.args.interval || 1000;
       }
 
-      const nextPoll = delta > this.args.interval ? 0 : this.args.interval - delta;
+      const nextPoll = delta > (this.args.interval ?? 1000) ? 0 : (this.args.interval ?? 1000) - delta;
 
       this.log(
         'getting poll time for %s, using last time of %s vs now %s. delta is %dms.',
@@ -200,7 +200,7 @@ export class ECUPoller extends EventEmitter {
             self.log('retrying in 1 second');
             setTimeout(doInitialPoll, 1000)
           });
-      }, 250);
+      }, 250) as unknown as number;
     }
 
     // Get started!
@@ -215,7 +215,7 @@ export class ECUPoller extends EventEmitter {
     }
   }
 
-  private addOutputListener (listener: Function) {
+  private addOutputListener (listener: (...args: any[]) => void) {
     if (this.curListener) {
       this.log('poller cannot add multiple listeners. removing cur listener');
       this.removeOutputListener();
@@ -254,7 +254,7 @@ export class ECUPoller extends EventEmitter {
     this.timeoutTimer = setTimeout(() => {
       self.log('poll operation timed out. trigger supplied callback');
       fn();
-    }, ts);
+    }, ts) as unknown as number;
 
     // Generate a timeout function. We store it so it can be removed
     this.timeoutFn = (output: OBDOutput) => {
@@ -274,7 +274,7 @@ export class ECUPoller extends EventEmitter {
         getParser().removeListener('data', this.timeoutFn);
       }
 
-      clearTimeout(this.timeoutTimer);
+      clearTimeout(this.timeoutTimer as number);
       this.timeoutTimer = undefined;
       this.timeoutFn = undefined;
       this.log('cleared existing poller timeout event');
@@ -318,7 +318,7 @@ export class ECUPoller extends EventEmitter {
             self.log(`error performing next poll. retry in ${time}ms`);
             doNextPoll(time);
           });
-      }, time);
+      }, time) as unknown as number;
     }
 
 
@@ -338,8 +338,10 @@ export class ECUPoller extends EventEmitter {
       // Track when we got this response
       self.lastResponseTs = Date.now();
 
-      // The emitted event is a match for this poller's PID
-      self.log(`(${self.args.pid.getPid()}) received relevant data event (${output.bytes}) ${Date.now() - self.lastPollTs}ms after polling`);
+      if (self.lastPollTs) {
+        // The emitted event is a match for this poller's PID
+        self.log(`(${self.args.pid.getPid()}) received relevant data event (${output.bytes}) ${Date.now() - self.lastPollTs}ms after polling`);
+      }
 
       // No longer need to worry about timeouts
       self.unsetTimeoutOperation();

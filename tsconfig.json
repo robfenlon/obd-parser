@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -12,15 +13,18 @@
     "removeComments": true,
     "noLib": false,
     "preserveConstEnums": true,
-    "suppressImplicitAnyIndexErrors": true,
     "sourceMap": false,
     "inlineSourceMap": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": ["*"]
-    }
+    "baseUrl": "."
   },
+  "include": ["lib/**/*"],
+  "exclude": [
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts",
+  ],
   "compileOnSave": true
 }

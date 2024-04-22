@@ -124,7 +124,7 @@ export function configureConnection (conn: OBDConnection) {
   };
 
   // Pipe all output from the serial connection to our parser
-  conn.on('data', function (str) {
+  conn.on('data', function (str:string) {
     log(`received data "${str}"`);
     getParser().write(str);
   });
@@ -152,7 +152,7 @@ export function configureConnection (conn: OBDConnection) {
   // TODO: use events instead
   // Nasty way to make sure configuration calls have been performed before use
   return new Promise((resolve) => {
-    let interval: NodeJS.Timer = setInterval(() => {
+    let interval: NodeJS.Timeout = setInterval(() => {
      if (queue.length === 0) {
        clearInterval(interval);
        setTimeout(function () {
