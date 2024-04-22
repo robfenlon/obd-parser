@@ -19,7 +19,7 @@
     "strictNullChecks": true,
     "baseUrl": "."
   },
-  "include": ["lib/**/*"],
+  "include": ["lib/**/*", "example/**/*"],
   "exclude": [
     "node_modules",
     "./node_modules",

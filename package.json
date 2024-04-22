@@ -25,8 +25,8 @@
     "typescript": "^5.4.5"
   },
   "scripts": {
-    "example": "npm run compile && tsc example/poll-rpm.ts --skipLibCheck && node example/poll-rpm.js",
-    "example-fake": "npm run compile && tsc example/poll-fake.ts --skipLibCheck && node example/poll-fake.js",
+    "example": "npm run compile && node example/poll-rpm.js",
+    "example-fake": "npm run compile && node example/poll-fake.js",
     "compile": "tsc",
     "prepublish": "npm run compile",
     "linelint": "linelint $(find lib/ -name \"*.ts\" -not -name \"*.d.ts\")",
