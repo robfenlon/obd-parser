@@ -496,3 +496,32 @@ export class SupportedPids extends PID {
     return supportedPids.join(',');
   }
 }
+
+export class BatteryStateOfHealth extends PID {
+  constructor () {
+    super({
+      mode: OBD_MESSAGE_TYPES.CURRENT_DATA,
+      pid: '22B061',
+      bytes: 2,
+      name: 'Battery SOH',
+      min: 0,
+      max: 100,
+      unit: 'rpm'
+    })
+  }
+
+  public getValueForBytes (bytes: string[]): number {
+    const a:number = parseHexToDecimal(bytes[2]) * 256;
+    const b:number = parseHexToDecimal(bytes[3]);
+
+    return (a + b) / 100;
+  }
+
+  public getRandomBytes (): string[] {
+    // ensure random value is int, then convert to hex
+    return [
+      this.getRandomInt(0, 255).toString(16),
+      this.getRandomInt(0, 255).toString(16)
+    ];
+  }
+}

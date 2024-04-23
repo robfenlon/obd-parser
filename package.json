@@ -24,12 +24,13 @@
     "typescript": "^5.4.5"
   },
   "scripts": {
+    "compile": "tsc",
     "example": "npm run compile && node example/poll-rpm.js",
     "example-fake": "npm run compile && node example/poll-fake.js",
-    "list": "npm run compile && node example/list-connectors.js",
-    "compile": "tsc",
-    "prepublish": "npm run compile",
     "linelint": "linelint $(find lib/ -name \"*.ts\" -not -name \"*.d.ts\")",
+    "list": "npm run compile && node example/list-connectors.js",
+    "prepublish": "npm run compile",
+    "soh": "npm run compile && node example/get-soh.js",
     "test": "echo \"Tests needed...\" && npm run-script linelint"
   },
   "keywords": [
