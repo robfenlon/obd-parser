@@ -1,20 +1,26 @@
-
-// In your code this should be changed to 'obd-parser'
 import * as OBD from '../lib/obd-interface.js';
 import input from 'input';
 import { getConnector, listConnectors } from 'obd-parser-serial-connection';
 
 listConnectors(async (connectors: Connector[]) => {
   if (connectors.length === 0) {
-    console.error("No connectors found 😢");
+    console.error('No connectors found 😢');
     process.exit();
   }
 
-  const connection = connectors.length === 1 ? connectors[0].path : await input.select(`Choose a connection to use:`, connectors.map(c => c.path));
+  const exitOption = { path: 'bye', friendlyName: 'Exit 👋' };
+  connectors.unshift(exitOption);
+
+  const choice = await input.select(`Choose a connection to use:`, connectors.map(o => o.friendlyName));
+  const connection = connectors.find(c => c.friendlyName === choice);
+
+  if (connection.path === 'bye') {
+    process.exit();
+  }
 
   // Returns a function that will allow us to connect to the serial port
   var connect: Function = getConnector({
-    serialPath: connection,
+    serialPath: connection.path,
     baudRate: 38400
   });
 
