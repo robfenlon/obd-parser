@@ -1,8 +1,9 @@
-var listConnectors = require('obd-parser-serial-connection').listConnectors;
+import { listConnectors } from 'obd-parser-serial-connection';
+
 console.log('List of possible connections:');
-listConnectors((c: string[]) => {
+listConnectors((c: Connector[]) => {
     c.forEach(connector => {
-        console.log('* ' + connector);
+        console.log(`${connector.path} (${connector.friendlyName})`);
     });
 
     if (c.length === 0) {

@@ -4,14 +4,13 @@ import * as OBD from '../lib/obd-interface.js';
 import input from 'input';
 import { getConnector, listConnectors } from 'obd-parser-serial-connection';
 
-listConnectors(async (connectors: string[]) => {
-  connectors = ['COM1', 'COM2'];
+listConnectors(async (connectors: Connector[]) => {
   if (connectors.length === 0) {
     console.error("No connectors found 😢");
     process.exit();
   }
 
-  const connection = await input.select(`Choose a connection to use:`, connectors);
+  const connection = await input.select(`Choose a connection to use:`, connectors.map(c => c.path));
 
   // Returns a function that will allow us to connect to the serial port
 var connect:Function = getConnector({
